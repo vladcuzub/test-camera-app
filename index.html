@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
+</head>
+<body>
+      <video id="video" autoplay></video>
+
+<button id="switchCamera">Switch Camera</button>
+
+<script>
+const video = document.getElementById('video');
+
+const constraints = { video: true, audio: true };
+navigator.mediaDevices.getUserMedia(constraints)
+  .then(mediaStream => {
+    video.srcObject = mediaStream;
+  })
+  .catch(error => {
+    console.error('Failed to get user media', error);
+  });
+
+const switchCameraButton = document.getElementById('switchCamera');
+switchCameraButton.addEventListener('click', () => {
+  const videoTracks = video.srcObject.getVideoTracks();
+  videoTracks.forEach(track => {
+    track.stop();
+  });
+
+  const newConstraints = {
+    video: { facingMode: { exact: 'environment' } },
+    audio: true,
+  };
+
+  navigator.mediaDevices.getUserMedia(newConstraints)
+    .then(mediaStream => {
+      video.srcObject = mediaStream;
+    })
+    .catch(error => {
+      console.error('Failed to switch camera', error);
+    });
+});
+</script>
+
+</body>
+</html>
